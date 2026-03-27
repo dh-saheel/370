@@ -15,9 +15,6 @@ services:
     build: ./backend
     ports:
       - "5001:5000"
-    environment:
-      DATABASE_URL: postgresql://root:rootpassword@db:5432/mainDB
-      NODE_ENV: development
     volumes:
     - ./backend:/app
     - /app/node_modules

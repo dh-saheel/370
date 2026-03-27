@@ -28,11 +28,8 @@ app.use('/api/professors', professorRoutes);
 
 // PostgreSQL connection pool
 const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST || 'localhost',
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT, 10) || 5432,
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
 });
 
 const connectWithRetry = () => {
