@@ -1,0 +1,38 @@
+services:
+  frontend:
+    container_name: projectFrontend
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  backend:
+    container_name: projectBackend
+    build: ./backend
+    ports:
+      - "5001:5000"
+    volumes:
+    - ./backend:/app
+    - /app/node_modules
+    depends_on:
+      - db
+
+  db:
+    container_name: projectDB
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: mainDB
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+volumes:
+  db_data:

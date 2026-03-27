@@ -1,0 +1,119 @@
+/* ── Outer form acts as the flex row wrapper ── */
+.create-post-panels {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.create-post .container {
+    width: 800px;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+/* Shared form column layout used in both panels */
+.create-post-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.create-post-form textarea,
+.create-post-form input[type="text"],
+.create-post-form input[type="number"] {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    resize: none;
+}
+
+.create-post-form input[type="checkbox"] {
+    margin-bottom: 1.5rem;
+}
+
+.create-post-form button {
+    width: 150px;
+    padding: 0.75rem;
+    background-color: #7F77DD;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.submit-btn-wrap {
+    opacity: 0;
+    visibility: hidden;
+}
+
+
+.details-panel {
+    padding: 2rem;
+    overflow: hidden;
+
+    max-width: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        max-width 0.4s ease,
+        opacity 0.4s ease,
+        visibility 0.4s ease,
+        padding 0.4s ease;
+}
+
+.details-panel--visible {
+    max-width: 650px;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    padding: 2rem;
+}
+
+.details-panel .create-post-form {
+    opacity: 0;
+    transition: opacity 0.25s ease 0s;
+}
+
+.details-panel--visible .create-post-form {
+    opacity: 1;
+    transition: opacity 0.25s ease 0.30s;
+}
+
+.details-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+@keyframes transition-out {
+  from {
+    opacity: 1;
+    visibility: visible;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes transition-in {
+  from {
+    opacity: 0;
+    visibility: hidden;
+  }
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
