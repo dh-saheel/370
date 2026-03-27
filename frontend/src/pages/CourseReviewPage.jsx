@@ -17,6 +17,7 @@ import React, { useEffect, useState } from "react";
 
 /* Reads course id from url */
 import { useParams } from "react-router-dom";
+import VoteButtons from "../components/VoteButtons";
 
 /* Imports the flag icon */
 import { FaFlag } from "react-icons/fa";
@@ -396,7 +397,7 @@ export default function CourseReviewPage(){
             >
             {/* Review title */}
             <strong>{singleReview.title}</strong>
-
+            
             {/* Flag icon */}
             <FaFlag
               onClick= {() =>{
@@ -421,6 +422,14 @@ export default function CourseReviewPage(){
 
             {/* Review text */}
             <p style={{ marginTop: "10px" }}>{textToShow}</p>
+            <div style={{ marginTop: "auto", marginLeft: "auto", width: "fit-content" }}>
+              <VoteButtons
+                className="mt-2"
+                reviewId={singleReview.id}
+                initialUp={singleReview.upvotes ?? 0}
+                initialDown={singleReview.downvotes ?? 0}
+              />
+            </div>
             </div>
           );
           })}

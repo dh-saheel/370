@@ -1,11 +1,11 @@
 const express = require('express');
-const { Pool } = require('pg');
 const cors = require('cors');
 const auth = require('./auth');
 
 const institutionRoutes = require('./src/routes/InstitutionRoutes');
 const departmentRoutes = require('./src/routes/DepartmentRoutes');
 const couresRoutes = require('./src/routes/CourseRoutes');
+const votesRoutes = require('./src/routes/VotesRoute');
 const professorRoutes = require('./src/routes/ProfessorRoutes');
 
 require('dotenv').config();
@@ -24,13 +24,11 @@ app.use('/api/auth', auth);
 app.use('/api/institutions', institutionRoutes);
 app.use('/api/departments', departmentRoutes);
 app.use('/api/courses', couresRoutes);
+app.use('/api/votes', votesRoutes);
+app.use('/api/auth', auth); 
 app.use('/api/professors', professorRoutes);
 
-// PostgreSQL connection pool
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
-});
+const pool = require('./src/config/db');
 
 const connectWithRetry = () => {
     console.log('Attempting to connect to the database...');
@@ -133,38 +131,39 @@ app.get('/api/reviews', async (req, res) => {
     const { courseId, search } = req.query;
 
     try {
-        /* Build query with JOINs for rich course and professor data */
         let query = `
             SELECT
-                reviews.*,
+                r.*,
                 courses.name AS course_name,
                 courses.code AS course_code,
-                professors.name AS professor_name
-            FROM reviews
-                JOIN courses ON reviews.course_id = courses.id
-                JOIN professors ON reviews.professor_id = professors.id
+                professors.name AS professor_name,
+                COUNT(CASE WHEN rv.is_like = true THEN 1 END) AS upvotes,
+                COUNT(CASE WHEN rv.is_like = false THEN 1 END) AS downvotes
+            FROM reviews r
+                JOIN courses ON r.course_id = courses.id
+                JOIN professors ON r.professor_id = professors.id
+                LEFT JOIN review_votes rv ON r.id = rv.review_id
         `;
 
         let values = [];
 
-        /* Filter by courseId if provided */
         if (courseId) {
-            query += ` WHERE reviews.course_id = $1`;
+            query += ` WHERE r.course_id = $1`;
             values.push(courseId);
         } else if (search && search.trim() !== '') {
-            /* Otherwise apply text search across course, professor, and review fields */
             query += `
                 WHERE
                     courses.name ILIKE $1 OR
                     courses.code ILIKE $1 OR
                     professors.name ILIKE $1 OR
-                    reviews.title ILIKE $1 OR
-                    reviews.content ILIKE $1
+                    r.title ILIKE $1 OR
+                    r.content ILIKE $1
             `;
             values.push(`%${search.trim()}%`);
         }
 
-        query += ` ORDER BY reviews.created_at DESC`;
+        query += ` GROUP BY r.id, courses.name, courses.code, professors.name`;
+        query += ` ORDER BY r.created_at DESC`;
 
         const result = await pool.query(query, values);
         res.json(result.rows);

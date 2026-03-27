@@ -57,6 +57,7 @@ CREATE TABLE reviews (
     title VARCHAR(200) NOT NULL,
     content TEXT NOT NULL,
     likes INT DEFAULT 0,
+    dislikes INT DEFAULT 0,
     flags INT DEFAULT 0,
     assignments TEXT,
     exams TEXT,
@@ -65,6 +66,16 @@ CREATE TABLE reviews (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (course_id) REFERENCES courses(id),
     FOREIGN KEY (professor_id) REFERENCES professors(id)
+);
+
+CREATE TABLE review_votes (
+    user_id INT NOT NULL,
+    review_id INT NOT NULL,
+    is_like BOOLEAN NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (review_id) REFERENCES reviews(id),
+    UNIQUE (user_id, review_id)
 );
 
 CREATE TABLE reports (

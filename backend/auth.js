@@ -2,15 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { Pool } = require('pg');
+const pool = require('./src/config/db');
 
 const router = express.Router();
 const SECRET_KEY = process.env.JWT_SECRET_KEY; // Loaded from .env file
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
-});
+
 
 // Signup handler
 router.post('/signup', async (req, res) => {
