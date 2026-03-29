@@ -137,11 +137,13 @@ app.get('/api/reviews', async (req, res) => {
                 courses.name AS course_name,
                 courses.code AS course_code,
                 professors.name AS professor_name,
+                users.username AS reviewer_username,
                 COUNT(CASE WHEN rv.is_like = true THEN 1 END) AS upvotes,
                 COUNT(CASE WHEN rv.is_like = false THEN 1 END) AS downvotes
             FROM reviews r
                 JOIN courses ON r.course_id = courses.id
                 JOIN professors ON r.professor_id = professors.id
+                JOIN users ON r.user_id = users.id
                 LEFT JOIN review_votes rv ON r.id = rv.review_id
         `;
 
@@ -162,7 +164,7 @@ app.get('/api/reviews', async (req, res) => {
             values.push(`%${search.trim()}%`);
         }
 
-        query += ` GROUP BY r.id, courses.name, courses.code, professors.name`;
+        query += ` GROUP BY r.id, courses.name, courses.code, professors.name, users.username`;
         query += ` ORDER BY r.created_at DESC`;
 
         const result = await pool.query(query, values);
