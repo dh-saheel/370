@@ -43,7 +43,7 @@ export default function ReviewModal({ review, onClose }) {
         </p>
 
         {/* Star rating */}
-        <p className="mb-5 text-gray-500 text-sm">
+        <p className="flex gap-2 mb-5 text-gray-500 text-sm">
           {[...Array(review.rating)].map((_, i) => (
             <FaStar key={i} color="#FFD400" />
           ))}
