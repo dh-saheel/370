@@ -33,9 +33,9 @@ export default function CourseReviewPage(){
   }
 
   /* Gets the review data for the selected course */
-  async function getMyReviews() {
+  async function getMyReviews( sortBy = "newest" ) {
     try{
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reviews?courseId=${courseId}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reviews?courseId=${courseId}&sortBy=${sortBy}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch reviews");
@@ -123,8 +123,14 @@ export default function CourseReviewPage(){
 
       {/* Reviews */}
       <div className="border rounded-xl overflow-hidden">
-        <div className="px-6 py-4">
+        <div className="flex flex-row justify-between px-6 py-4">
           <h4 className="text-lg uppercase font-bold tracking-wide m-0">Reviews</h4>
+          <select className="ml-4 p-2 rounded" onChange={(e) => getMyReviews(e.target.value)}>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="highest">Highest rating</option>
+            <option value="lowest">Lowest rating</option>
+          </select>
         </div>
         <div className="p-6 max-h-[60vh] overflow-y-auto">
           <ReviewContainer

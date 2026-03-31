@@ -130,7 +130,7 @@ app.post('/api/reviews', async (req, res) => {
 
 /* "GET" handler to fetch reviews */
 app.get('/api/reviews', async (req, res) => {
-    const { courseId, search } = req.query;
+    const { courseId, search, sortBy } = req.query;
 
     try {
         let query = `
@@ -167,7 +167,16 @@ app.get('/api/reviews', async (req, res) => {
         }
 
         query += ` GROUP BY r.id, courses.name, courses.code, professors.name, users.username`;
-        query += ` ORDER BY r.created_at DESC`;
+
+        if (sortBy === 'newest') {
+            query += ` ORDER BY r.created_at DESC`;
+        } else if (sortBy === 'oldest') {
+            query += ` ORDER BY r.created_at ASC`;
+        } else if (sortBy === 'highest') {
+            query += ` ORDER BY r.rating DESC`;
+        } else if (sortBy === 'lowest') {
+            query += ` ORDER BY r.rating ASC`;
+        }
 
         const result = await pool.query(query, values);
         res.json(result.rows);

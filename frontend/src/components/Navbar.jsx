@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import DefaultIcon from '../assets/defaultIcon.svg';
 import tempLogoNeg from '../assets/tempLogoNeg.svg';
@@ -10,6 +10,7 @@ const Navbar = () => {
     const [verifiedUser, setVerifiedUser] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
 
     const checkAuth = () => {
         const token = localStorage.getItem('token');
@@ -50,7 +51,7 @@ const Navbar = () => {
 
     useEffect(() => {
         checkAuth();
-    }, []);
+    }, [location.pathname]);
 
     const handleSearch = (e) => {
         e.preventDefault();
