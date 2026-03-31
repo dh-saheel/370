@@ -13,7 +13,7 @@ const SelectCard = ({ label, subLabel, selected, onClick }) => {
             <div>{label}</div>
             {subLabel && <div style={{ fontSize: "12px", opacity: 0.7 }}>{subLabel}</div>}
         </div>
-    )
-}
+    );
+};
 
 export default SelectCard;

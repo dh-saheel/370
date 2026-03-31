@@ -58,6 +58,7 @@ CREATE TABLE reviews (
     content TEXT NOT NULL,
     likes INT DEFAULT 0,
     dislikes INT DEFAULT 0,
+    comments_count INT DEFAULT 0,
     flags INT DEFAULT 0,
     assignments TEXT,
     exams TEXT,
@@ -76,6 +77,16 @@ CREATE TABLE review_votes (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (review_id) REFERENCES reviews(id),
     UNIQUE (user_id, review_id)
+);
+
+CREATE TABLE comments (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    review_id INT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (review_id) REFERENCES reviews(id)
 );
 
 CREATE TABLE reports (
@@ -124,10 +135,13 @@ INSERT INTO departments (name, institution_id) VALUES
 
 -- Add a dummy user
 INSERT INTO users (username, email, password_hash) VALUES 
-('test', 'test@example.com', 'password');
+('test', 'test@example.com', '$2b$10$qkeGOHrGvfLtWDJv4.WtCOe39GCO3wSYm3frmn7gKl9lfEwnL.2N2');
 
 INSERT INTO users (username, email, password_hash) VALUES 
-('user2', 'test2@example.com', 'password');
+('user2', 'test2@example.com', '$2b$10$qkeGOHrGvfLtWDJv4.WtCOe39GCO3wSYm3frmn7gKl9lfEwnL.2N2');
+
+INSERT INTO users (username, email, password_hash, isAdmin) VALUES
+('admin', 'admin@example.com', '$2b$10$qkeGOHrGvfLtWDJv4.WtCOe39GCO3wSYm3frmn7gKl9lfEwnL.2N2', 'TRUE');  
 
 -- Add dummy professors
 INSERT INTO professors (name, department_id, institution_id) VALUES

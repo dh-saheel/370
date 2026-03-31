@@ -64,10 +64,10 @@ router.post('/login', async (req, res) => {
     }
 
     // Generate JWT
-    const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, username: user.username, isAdmin: user.isadmin }, SECRET_KEY, { expiresIn: '1h' });
 
     // Send token, username, and expiration time to the client
-    res.status(200).json({ token, username: user.username, expiresAt: Date.now() + 3600000 }); 
+    res.status(200).json({ token, username: user.username, expiresAt: Date.now() + 3600000, isAdmin: user.isadmin }); 
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -86,7 +86,7 @@ router.get('/verify', (req, res) => {
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    res.status(200).json({ valid: true, username: decoded.username });
+    res.status(200).json({ valid: true, username: decoded.username, isAdmin: decoded.isAdmin });
   } catch (error) {
     console.error(error);
     res.status(401).json({ valid: false, message: 'Invalid token' });

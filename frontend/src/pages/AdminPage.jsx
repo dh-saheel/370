@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AdminPost from '../components/AdminPost';
 
 const API = `${import.meta.env.VITE_API_URL}/api/admin`
@@ -13,11 +14,49 @@ const Actions = {
 }
 
 const AdminPage = () => {
+  const navigate = useNavigate();
   const [content, setContent] = useState([]);
   const [loading, setLoading] = useState(true);
   const [limit, setLimit] = useState("20");
   const [timeSort, setTimeSort] = useState('created_desc');
   const [flagSort, setFlagSort] = useState('flags_desc');
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  async function checkIsAdmin() {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      return false;
+    }
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/verify`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+
+      const data = await res.json();
+      return data.isAdmin; 
+    } catch (error) {
+      console.error("Error verifying token:", error);
+      return false;
+    }
+  };
+
+  async function showAdmin() {
+    const authorized = await checkIsAdmin();
+
+    if (authorized) {
+      setIsAdmin(authorized);
+      getReportedContent();
+    } else {
+      navigate("/auth");
+    }
+  };
+
 
   /* Gets the reported content to display */
   async function getReportedContent() {
@@ -30,8 +69,8 @@ const AdminPage = () => {
   }
 
   useEffect(() => {
-    getReportedContent();
-  }, [timeSort, flagSort, limit]);
+    showAdmin();
+  }, [limit, timeSort, flagSort]);
 
 
   /* Removes the report from the UI. Also removes the flags from the review in the database. */
@@ -99,46 +138,59 @@ const AdminPage = () => {
   }
 
   if (loading) {
-    return <p>Loading content</p>;
+    return (
+      <div className='flex flex-col items-center justify-center min-h-screen text-gray-500'>
+        <p className="font-medium">Loading Content</p>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return <p>Invalid Admin Status</p>;
   }
 
   /* In a scroll box display all the reported content. */
   return (
     <div className='max-w-[700px] mx-auto'>
-      <h2 className='text-center'>Reported Content</h2>
-      
-      <div className='flex items-center gap-2'>
-        <p className='text-center'>Sort</p>
-        <select 
-          className={dropDownStyle}
-          value={flagSort}
-          onChange={(e) => setFlagSort(e.target.value)}
-        >
-          <option value="flags_desc">Highest Flags</option>
-          <option value="flags_asc">Lowest Flags</option>
-        </select>
-        
-        <p className='text-center'>Sort</p>
-        <select 
-          className={dropDownStyle}
-          value={timeSort}
-          onChange={(e) => setTimeSort(e.target.value)}
-        >
-          <option value="created_desc">Newest First</option>
-          <option value="created_asc">Oldest First</option>
-        </select>
-
-        <p className='text-center'>Amount of Posts</p>
-        <select 
-          className={dropDownStyle}
-          value={limit}
-          onChange={(e) => setLimit(e.target.value)}
-        >
-          <option value="1">1</option>
-          <option value="20">20</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
+      <div className='bg-purple-500 text-white rounded-lg m-4'>
+        <h2 className='text-lg text-center'>Reported Content</h2>
+      </div>
+      <div className='flex items-center gap-8 mb-4'>
+        <div className='flex flex-col'>
+          <p className='text-center text-sm'>Sort by Flags</p>
+          <select 
+            className={dropDownStyle}
+            value={flagSort}
+            onChange={(e) => setFlagSort(e.target.value)}
+          >
+            <option value="flags_desc">Highest Flags</option>
+            <option value="flags_asc">Lowest Flags</option>
+          </select>
+        </div>
+        <div className='flex flex-col'>
+          <p className='text-center text-sm'>Sort by Time</p>
+          <select 
+            className={dropDownStyle}
+            value={timeSort}
+            onChange={(e) => setTimeSort(e.target.value)}
+          >
+            <option value="created_desc">Newest First</option>
+            <option value="created_asc">Oldest First</option>
+          </select>
+        </div>
+        <div className='flex flex-col'>
+          <p className='text-center text-sm'>Amount of Posts</p>
+          <select 
+            className={dropDownStyle}
+            value={limit}
+            onChange={(e) => setLimit(e.target.value)}
+          >
+            <option value="1">1</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
       </div>
       
       <div className={`${scrollContainerStyle}`}>

@@ -37,6 +37,7 @@ export default function Auth() {
         alert('Login successful!');
         localStorage.setItem('token', response.data.token); // Store token in localStorage
         localStorage.setItem('username', response.data.username); // Store username in localStorage
+        localStorage.setItem('isAdmin', response.data.isAdmin); // Store Admin Creds
         localStorage.setItem('expiresAt', response.data.expiresAt); // Store token expiration time
         navigate(prevLocation);
       } else {

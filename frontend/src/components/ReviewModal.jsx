@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { FaStar } from "react-icons/fa";
 import VoteButtons from "./VoteButtons";
+import CommentContainer from "./CommentContainer";
 
 export default function ReviewModal({ review, onClose }) {
   /* Close on Escape key */
@@ -86,6 +87,8 @@ export default function ReviewModal({ review, onClose }) {
             initialDown={review.downvotes ?? 0}
           />
         </div>
+
+        <CommentContainer reviewId={review.id} />
       </div>
     </div>
   );
