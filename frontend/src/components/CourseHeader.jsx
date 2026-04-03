@@ -1,4 +1,5 @@
 import { FaStar } from 'react-icons/fa';
+import { FaChalkboardTeacher } from 'react-icons/fa';
 
 function getRatingColor(rating) {
   if (!rating || rating <= 1) return "#DA3D20";
@@ -16,6 +17,14 @@ export default function CourseHeader({ course }) {
           <h1 className="text-4xl font-bold">{course.code} — {course.name}</h1>
           <p className="text-gray-600 text-lg font-mono font-bold mt-1">{course.department_name}</p>
           <p className="text-gray-600 text-lg font-mono font-bold">{course.institution_name}</p>
+          {course.professors && course.professors.length > 0 && (
+            <div className="flex items-start gap-2 mt-2">
+              <FaChalkboardTeacher className="text-gray-500 mt-1 shrink-0" />
+              <p className="text-gray-600 text-sm font-mono">
+                {course.professors.join(", ")}
+              </p>
+            </div>
+          )}
         </div>
         <div className="flex flex-col items-center gap-1 text-lg p-12 shadow rounded-lg">
           <FaStar 

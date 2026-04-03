@@ -31,11 +31,14 @@ const findById = async (courseID) => {
             c.level,
             d.name AS department_name,
             i.name AS institution_name,
-            ROUND(AVG(r.rating)::numeric, 1) AS average_rating
+            ROUND(AVG(r.rating)::numeric, 1) AS average_rating,
+            ARRAY_AGG(DISTINCT p.name ORDER BY p.name) FILTER (WHERE p.name IS NOT NULL) AS professors
         FROM courses c
         LEFT JOIN reviews r ON c.id = r.course_id
         LEFT JOIN departments d ON c.department_id = d.id
         LEFT JOIN institutions i ON c.institution_id = i.id
+        LEFT JOIN course_professors cp ON c.id = cp.course_id
+        LEFT JOIN professors p ON cp.professor_id = p.id
         WHERE c.id = $1
         GROUP BY c.id, c.name, c.code, c.department_id, c.institution_id, c.level, d.name, i.name`,
         [courseID]

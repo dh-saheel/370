@@ -18,4 +18,12 @@ const create = async (name, departmentId, institutionId) => {
     return result.rows[0];
 };
 
-module.exports = { findByDepartment, create };
+// links a professor to a course in course_professors (idempotent)
+const linkToCourse = async (professorId, courseId) => {
+    await db.query(
+        `INSERT INTO course_professors (course_id, professor_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+        [courseId, professorId]
+    );
+};
+
+module.exports = { findByDepartment, create, linkToCourse };

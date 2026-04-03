@@ -2,6 +2,7 @@ import './CreatePost.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
+import Select from 'react-select';
 
 function CreatePost() {
 
@@ -63,7 +64,8 @@ function CreatePost() {
             body: JSON.stringify({
                 name: newProfessor,
                 departmentId: course.department_id,
-                institutionId: course.institution_id
+                institutionId: course.institution_id,
+                courseId: courseId
             })
         });
         const created = await res.json();
@@ -188,17 +190,25 @@ function CreatePost() {
                 {/* Professor selection */}
                 <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-600 mb-1">Professor</label>
-                    <select
-                        className="w-full border border-gray-200 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
-                        value={selectedProfessor}
-                        onChange={(e) => setSelectedProfessor(e.target.value)}
+                    <Select
+                        options={professors.map(p => ({ value: p.id, label: p.name }))}
+                        value={professors.map(p => ({ value: p.id, label: p.name })).find(opt => opt.value === selectedProfessor) ?? null}
+                        onChange={(opt) => setSelectedProfessor(opt?.value ?? '')}
+                        placeholder="Select Professor"
                         required
-                    >
-                        <option value="">Select Professor</option>
-                        {professors.map(prof => (
-                            <option key={prof.id} value={prof.id}>{prof.name}</option>
-                        ))}
-                    </select>
+                        unstyled
+                        classNames={{
+                            control: () =>
+                                'w-full border border-gray-200 rounded-lg px-3 py-1 text-sm focus-within:ring-2 focus-within:ring-purple-400 bg-white cursor-pointer',
+                            menu: () =>
+                                'mt-1 border border-gray-200 rounded-lg bg-white shadow-md overflow-hidden',
+                            menuList: () => 'py-1',
+                            option: ({ isFocused }) =>
+                                `px-4 py-2 cursor-pointer ${isFocused ? 'bg-purple-50 text-purple-700' : 'text-gray-700'}`,
+                            singleValue: () => 'text-gray-700',
+                            placeholder: () => 'text-gray-400',
+                        }}
+                    />
                     {!showAddProfessor && (
                         <p
                             className="text-xs mt-1 cursor-pointer"

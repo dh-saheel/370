@@ -9,6 +9,7 @@ const votesRoutes = require('./src/routes/VotesRoute');
 const professorRoutes = require('./src/routes/ProfessorRoutes');
 const commentRoutes = require('./src/routes/CommentRoutes');
 const userRoutes = require('./src/routes/UserRoutes');
+const ProfessorModel = require('./src/models/ProfessorModel');
 
 require('dotenv').config();
     
@@ -115,6 +116,9 @@ app.post('/api/reviews', async (req, res) => {
 
         const result = await pool.query(query, values);
         const newReview = result.rows[0];
+
+        // ensure the course–professor relationship exists for CourseHeader display
+        await ProfessorModel.linkToCourse(professorId, courseId);
 
         console.log('Review created:', newReview);
         res.status(201).json({ 

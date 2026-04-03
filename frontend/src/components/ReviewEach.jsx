@@ -35,6 +35,9 @@ export default function ReviewEach({ review, onFlag, onUnflag }) {
         <div className="flex justify-between items-start">
           <div>
             <strong>{review.title}</strong>
+            {review.professor_name && (
+              <p className="text-sm text-gray-500 mt-0.5">{review.professor_name}</p>
+            )}
           </div>
           <FaFlag
             onClick={(e) => {
