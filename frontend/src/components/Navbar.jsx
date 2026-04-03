@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
-import DefaultIcon from '../assets/defaultIcon.svg';
+import { FaUserCircle } from "react-icons/fa";
+import { MdAdminPanelSettings } from "react-icons/md";
 import tempLogoNeg from '../assets/tempLogoNeg.svg';
 
 
 const Navbar = () => {
 
     const [verifiedUser, setVerifiedUser] = useState(null);
+    const [verifiedAdmin, setVerifiedAdmin] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
@@ -15,6 +17,8 @@ const Navbar = () => {
     const checkAuth = () => {
         const token = localStorage.getItem('token');
         if (!token) {
+            setVerifiedUser(null);
+            setVerifiedAdmin(false);
             return;
         }
         // if token is expired, remove it from localStorage and return
@@ -37,12 +41,15 @@ const Navbar = () => {
                 const data = await res.json();
                 if (data.valid) {
                     setVerifiedUser(data.username);
+                    setVerifiedAdmin(data.isAdmin);
                 } else {
                     setVerifiedUser(null);
+                    setVerifiedAdmin(false);
                 }
             } catch (error) {
                 console.error('Error verifying token:', error);
                 setVerifiedUser(null);
+                setVerifiedAdmin(false);
             }
         };
 
@@ -94,12 +101,18 @@ const Navbar = () => {
 
                     {verifiedUser ? (
                         <Link to="/dashboard" className="hover:text-gray-300 transition-colors duration-200 font-bold flex items-center gap-2">
-                            <img src={DefaultIcon} alt="User Icon" className="h-6 w-6 rounded-full" />
+                            <FaUserCircle size={24} />
                             {verifiedUser}
                         </Link>
                     ) : (
                         <Link to="/auth" className="hover:text-gray-300 transition-colors duration-200 font-bold">Login/Signup</Link>
                     )}
+
+                    {verifiedAdmin ? (
+                        <Link to="/admin" className="hover:text-gray-300 transition-colors duration-200 font-bold flex items-center gap-2">
+                            <MdAdminPanelSettings size={20} />
+                        </Link>
+                    ) : null}
                 </div>
             </div>
         </nav>

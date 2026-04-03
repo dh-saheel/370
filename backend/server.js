@@ -8,6 +8,7 @@ const couresRoutes = require('./src/routes/CourseRoutes');
 const votesRoutes = require('./src/routes/VotesRoute');
 const professorRoutes = require('./src/routes/ProfessorRoutes');
 const commentRoutes = require('./src/routes/CommentRoutes');
+const userRoutes = require('./src/routes/UserRoutes');
 
 require('dotenv').config();
     
@@ -29,6 +30,7 @@ app.use('/api/votes', votesRoutes);
 app.use('/api/auth', auth); 
 app.use('/api/professors', professorRoutes);
 app.use('/api', commentRoutes);
+app.use('/api/users', userRoutes);
 
 const pool = require('./src/config/db');
 

@@ -1,101 +1,44 @@
-/* React references: 
-*                    https://react.dev/reference/react
-*                    https://www.w3schools.com/react/react_jsx.asp 
-*
-*  Tailwind references:
-*                    https://tailwindcss.com/docs/installation/using-vite
-*
-*  Extra references:
-*                    https://stackoverflow.com/questions
-*
-*  Persona 4 User Story: 1                                          
-*/
-
-
-/* Imports react tools */
-import React, { useEffect, useState } from "react";
-
-/* Imports navigation */
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function CoursesListPage(){
-    
-    /* Stores the list of courses form the backend */
+export default function CoursesListPage() {
     const [courses, setCourses] = useState([]);
-
-    /* Allows to navigate to another page */
     const navigate = useNavigate();
 
-    /**
-     * Gets all courses that have reviews from the backend
-     */
     async function getCourses() {
-
         try {
-            /* Sends request to backend */
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/courses/reviewed`);
-            
-            /* Convert response into JSON */
             const data = await response.json();
-
-            /* Stores the courses in state */
             setCourses(data);
-
         } catch (error) {
             console.log("Error fetching courses:", error);
         }
     }
 
-    /* Fetches the data when the page opens */
     useEffect(() => {
         getCourses();
     }, []);
 
-
     return (
-        <div style={{
-            padding: "40px",
-            fontFamily: "monospace" }}>
-            
-            {/* Page Title */}
-            <h1>Reviewed Courses</h1>
-            
-            {/* Checks if there are no courses with review */}
+        <div className="max-w-4xl mx-auto px-10 py-10 font-mono">
+            <h1 className="text-2xl font-semibold text-gray-800 mb-6">Reviewed Courses</h1>
+
             {courses.length === 0 && (
-                <p> No courses with reviews yet. </p>
+                <p className="text-gray-500">No courses with reviews yet.</p>
             )}
 
-            {/* Loop through each course */}
-            {courses.map(function(course) {
-                return (
-                    <div
-                        key={course.id}
-
-                        /* Box Style */
-                        style={{
-                            border: "1px solid black",
-                            padding: "15px",
-                            marginBottom: "15px",
-                            cursor: "pointer"
-                        }}
-
-                        onClick={() => navigate(`/courses/${course.id}`)}
-                    >
-                        {/* Course Code and Name */}
-                        <strong> {course.code} - {course.name} </strong>
-
-                        {/* Department */}
-                        <p>{course.department_name}</p>
-
-                        {/* Institution */}
-                        <p>{course.institution_name}</p>
-
-                        {/* Rating */}
-                        <p> Rating: {course.average_rating || 0} ★</p>
-
-                    </div>
-                );
-            })}
+            {courses.map(course => (
+                <div
+                    key={course.id}
+                    onClick={() => navigate(`/courses/${course.id}`)}
+                    className="border border-gray-200 rounded-lg p-4 mb-4 cursor-pointer hover:shadow-md transition-shadow bg-white"
+                >
+                    <strong className="text-gray-800">{course.code} - {course.name}</strong>
+                    <p className="text-sm text-gray-500 mt-1">{course.department_name}</p>
+                    <p className="text-sm text-gray-500">{course.institution_name}</p>
+                    <p className="text-sm text-yellow-500 mt-1">{course.average_rating || 0} ★</p>
+                </div>
+            ))}
         </div>
     );
 }

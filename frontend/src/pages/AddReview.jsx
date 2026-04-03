@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import Select from "react-select";
 
 const AddReview = () => {
     const navigate = useNavigate();
@@ -21,6 +21,10 @@ const AddReview = () => {
     const [newInstitution, setNewInstitution] = useState("");
     const [newDepartment, setNewDepartment] = useState("");
     const [newCourse, setNewCourse] = useState({name: "", code: ""});
+
+    const institutionOptions = institutions.map(inst => ({ value: inst.id, label: inst.name }));
+    const departmentOptions = departments.map(dept => ({ value: dept.id, label: dept.name }));
+    const courseOptions = courses.map(c => ({ value: c.id, label: `${c.code} - ${c.name}` }));
 
     // runs once on page load, fetches all institutions to fill in the institution dropdown
     useEffect(() => {
@@ -110,16 +114,26 @@ const AddReview = () => {
                 <div className="flex flex-col gap-5">
                     <div>
                         <p className="text-sm text-gray-500 mb-1">Institution</p>
-                        <select 
-                            className="w-full border border-gray-200 rounded-lg px-4 py-1 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                            value={selectedInstitution}
-                            onChange={(e) => setSelectedInstitution(e.target.value)}
-                        >
-                            <option value="">Select Institution</option>
-                            {institutions.map(inst => (
-                                <option key={inst.id} value={inst.id}>{inst.name}</option>
-                            ))}
-                        </select>
+                        <Select
+                            options={institutionOptions}
+                            value={institutionOptions.find(opt => opt.value === selectedInstitution) ?? null}
+                            onChange={(opt) => setSelectedInstitution(opt?.value ?? '')}
+                            maxMenuHeight={36 * 6}
+                            classNamePrefix="rs"
+                            unstyled
+                            classNames={{
+                                control: () =>
+                                    'w-full border border-gray-200 rounded-lg px-4 py-1 focus-within:ring-2 focus-within:ring-purple-400 bg-white cursor-pointer',
+                                menu: () =>
+                                    'mt-1 border border-gray-200 rounded-lg bg-white shadow-md overflow-hidden',
+                                menuList: () => 'py-1',
+                                option: ({ isFocused }) =>
+                                    `px-4 py-2 cursor-pointer ${isFocused ? 'bg-purple-50 text-purple-700' : 'text-gray-700'}`,
+                                singleValue: () => 'text-gray-700',
+                                placeholder: () => 'text-gray-400',
+                            }}
+                        />
+                            
 
                         {!showAddInstitution && (
                             <p
@@ -160,16 +174,25 @@ const AddReview = () => {
                 {/* department dropdown */}
                 <div className="flex flex-col gap-5 mt-5">
                     <p className="text-sm text-gray-500 mb-1">Department</p>
-                    <select 
-                        className="w-full border border-gray-200 rounded-lg px-4 py-1 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                        value={selectedDepartment}
-                        onChange={(e) => setSelectedDepartment(e.target.value)}
-                    >
-                        <option value="">Select Department</option>
-                        {departments.map(dept => (
-                            <option key={dept.id} value={dept.id}>{dept.name}</option>
-                        ))}
-                    </select>
+                    <Select
+                        options={departmentOptions}
+                        value={departmentOptions.find(opt => opt.value === selectedDepartment) ?? null}
+                        onChange={(opt) => setSelectedDepartment(opt?.value ?? '')}
+                        placeholder="Select Department"
+                        maxMenuHeight={36 * 6}
+                        unstyled
+                        classNames={{
+                            control: () =>
+                                'w-full border border-gray-200 rounded-lg px-4 py-1 focus-within:ring-2 focus-within:ring-purple-400 bg-white cursor-pointer',
+                            menu: () =>
+                                'mt-1 border border-gray-200 rounded-lg bg-white shadow-md overflow-hidden',
+                            menuList: () => 'py-1',
+                            option: ({ isFocused }) =>
+                                `px-4 py-2 cursor-pointer ${isFocused ? 'bg-purple-50 text-purple-700' : 'text-gray-700'}`,
+                            singleValue: () => 'text-gray-700',
+                            placeholder: () => 'text-gray-400',
+                        }}
+                    />
                     {!showAddDepartment && (
                         <p
                             className="text-xs mt-1 cursor-pointer"
@@ -208,16 +231,25 @@ const AddReview = () => {
                 {/* course dropdown */}
                 <div className="flex flex-col gap-5 mt-5">
                     <p className="text-sm text-gray-500 mb-1">Course</p>
-                    <select 
-                        className="w-full border border-gray-200 rounded-lg px-4 py-1 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                        value={selectedCourse}
-                        onChange={(e) => setSelectedCourse(e.target.value)}
-                    >
-                        <option value="">Select Course</option>
-                        {courses.map(c => (
-                            <option key={c.id} value={c.id}>{c.code} - {c.name}</option>
-                        ))}
-                    </select>
+                    <Select
+                        options={courseOptions}
+                        value={courseOptions.find(opt => opt.value === selectedCourse) ?? null}
+                        onChange={(opt) => setSelectedCourse(opt?.value ?? '')}
+                        placeholder="Select Course"
+                        maxMenuHeight={36 * 6}
+                        unstyled
+                        classNames={{
+                            control: () =>
+                                'w-full border border-gray-200 rounded-lg px-4 py-1 focus-within:ring-2 focus-within:ring-purple-400 bg-white cursor-pointer',
+                            menu: () =>
+                                'mt-1 border border-gray-200 rounded-lg bg-white shadow-md overflow-hidden',
+                            menuList: () => 'py-1',
+                            option: ({ isFocused }) =>
+                                `px-4 py-2 cursor-pointer ${isFocused ? 'bg-purple-50 text-purple-700' : 'text-gray-700'}`,
+                            singleValue: () => 'text-gray-700',
+                            placeholder: () => 'text-gray-400',
+                        }}
+                    />
                     {!showAddCourse && (
                         <p
                             className="text-xs mt-1 cursor-pointer"

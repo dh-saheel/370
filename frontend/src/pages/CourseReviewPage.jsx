@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 /* Reads course id from url */
 import { useParams } from "react-router-dom";
+import Select from "react-select";
 import CourseHeader from "../components/CourseHeader";
 import ReviewContainer from "../components/ReviewContainer";
 
@@ -9,6 +10,15 @@ export default function CourseReviewPage(){
 
   /* Gets the current course id from the route */
   const { courseId } = useParams();
+
+  const sortOptions = [
+    { value: "newest", label: "Newest" },
+    { value: "oldest", label: "Oldest" },
+    { value: "highest", label: "Highest Rating" },
+    { value: "lowest", label: "Lowest Rating" },
+  ];
+
+  const [selectedSort, setSelectedSort] = useState(sortOptions[0]);
 
   /* Empty list of reviews */
   const [reviews, setReviews] = useState([]);
@@ -125,12 +135,23 @@ export default function CourseReviewPage(){
       <div className="border rounded-xl overflow-hidden">
         <div className="flex flex-row justify-between px-6 py-4">
           <h4 className="text-lg uppercase font-bold tracking-wide m-0">Reviews</h4>
-          <select className="ml-4 p-2 rounded" onChange={(e) => getMyReviews(e.target.value)}>
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="highest">Highest rating</option>
-            <option value="lowest">Lowest rating</option>
-          </select>
+          <Select
+            options={sortOptions}
+            value={selectedSort}
+            onChange={(opt) => { setSelectedSort(opt); getMyReviews(opt.value); }}
+            isSearchable={false}
+            unstyled
+            classNames={{
+              control: () =>
+                'min-w-[200px] border border-gray-200 rounded-lg px-4 py-1 focus-within:ring-2 focus-within:ring-purple-400 bg-white cursor-pointer',
+              menu: () =>
+                'mt-1 border border-gray-200 rounded-lg bg-white shadow-md overflow-hidden',
+              menuList: () => 'py-1',
+              option: ({ isFocused }) =>
+                `px-4 py-2 cursor-pointer ${isFocused ? 'bg-purple-50 text-purple-700' : 'text-gray-700'}`,
+              singleValue: () => 'text-gray-700',
+            }}
+          />
         </div>
         <div className="p-6 max-h-[60vh] overflow-y-auto">
           <ReviewContainer
