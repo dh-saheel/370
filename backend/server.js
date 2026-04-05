@@ -218,6 +218,12 @@ app.patch('/api/reviews/:id/flag', async (req, res) =>  {
             });
         }
 
+        /* Adds report with the review. */
+        await pool.query(
+            `INSERT INTO reports (user_id, review_id, reason)
+            VALUES ($1, $2, $3);`, [1, id, "No reason."]
+        );
+
         /* Return the updated review */
         res.status(200).json({
             message: 'Review flagged successfully',
